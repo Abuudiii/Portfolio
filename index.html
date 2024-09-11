@@ -3,79 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Portfolio</title>
+    <meta name="author" content="Abdullah Nawaz Sheikh">
+    <meta name="description" content="A0 Hello World - Tangible & Physical HCI">
+    <title>A0 Hello World Project - Abdullah Nawaz Sheikh</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
             margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
+            padding: 20px;
         }
         header {
-            background: #333;
-            color: #fff;
-            padding: 1em;
             text-align: center;
-        }
-        .container {
-            width: 80%;
-            margin: 0 auto;
+            padding: 20px;
         }
         section {
-            padding: 2em 0;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
-        h2 {
-            border-bottom: 2px solid #333;
-            padding-bottom: 0.5em;
+        h1, h2 {
+            color: #4CAF50;
         }
-        .work-item {
-            margin-bottom: 1em;
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        .video-container {
+            text-align: center;
+            margin: 20px 0;
         }
         footer {
-            background: #333;
-            color: #fff;
             text-align: center;
-            padding: 1em;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
+            padding: 10px;
+            font-size: 0.8em;
+            color: #777;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Your Name</h1>
-        <p>Web Developer | Designer | Enthusiast</p>
+        <h1>A0 Hello World Project</h1>
+        <p>By Abdullah Nawaz Sheikh - CPSC 599/601 (Fall 2024)</p>
     </header>
-    
-    <div class="container">
-        <section id="about">
-            <h2>About Me</h2>
-            <p>Hello! I'm a web developer with a passion for creating stunning websites. I have experience in HTML, CSS, JavaScript, and more.</p>
-        </section>
 
-        <section id="work">
-            <h2>My Work</h2>
-            <div class="work-item">
-                <h3>Project Title 1</h3>
-                <p>Description of the project.</p>
-            </div>
-            <div class="work-item">
-                <h3>Project Title 2</h3>
-                <p>Description of the project.</p>
-            </div>
-            <!-- Add more work items as needed -->
-        </section>
+    <section>
+        <h2>Project Title: LED Button Circuit</h2>
+        <p><strong>Short Description:</strong> A simple circuit consisting of an LED controlled by a button. The LED light is diffused with a creative surprise element.</p>
+    </section>
 
-        <section id="contact">
-            <h2>Contact Me</h2>
-            <p>Email: </p>
-            <!-- Add more contact information or a contact form -->
-        </section>
-    </div>
-    
+    <section>
+        <h2>Concept Development and Final Artifact</h2>
+        <p>Here are some images showing the development of the concept and the final artifact:</p>
+        <img src="path-to-your-image1.jpg" alt="Concept Development Image 1">
+        <img src="path-to-your-image2.jpg" alt="Concept Development Image 2">
+    </section>
+
+    <section class="video-container">
+        <h2>Project Interaction Video</h2>
+        <p>Watch the interaction with the project below:</p>
+        <video controls>
+            <source src="path-to-your-video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </section>
+
+    <section>
+        <h2>Arduino Code</h2>
+        <pre>
+            <code>
+            // Arduino code for LED Button Circuit
+            int ledPin = 13;
+            int buttonPin = 2;
+            int buttonState = 0;
+
+            void setup() {
+                pinMode(ledPin, OUTPUT);
+                pinMode(buttonPin, INPUT);
+            }
+
+            void loop() {
+                buttonState = digitalRead(buttonPin);
+                if (buttonState == HIGH) {
+                    digitalWrite(ledPin, HIGH);
+                } else {
+                    digitalWrite(ledPin, LOW);
+                }
+            }
+            </code>
+        </pre>
+    </section>
+
+    <section>
+        <h2>Circuit Schematic</h2>
+        <p>Below is the circuit schematic:</p>
+        <img src="path-to-your-circuit-schematic.jpg" alt="Circuit Schematic">
+    </section>
+
+    <section>
+        <h2>Reference Materials</h2>
+        <p>Here are some reference materials I used for the project:</p>
+        <ul>
+            <li>Arduino Documentation: <a href="https://www.arduino.cc/en/Guide/HomePage" target="_blank">Arduino Official Guide</a></li>
+            <li>Button and LED Circuit Tutorial: <a href="https://www.example.com" target="_blank">Example Tutorial</a></li>
+        </ul>
+    </section>
+
     <footer>
-        <p>&copy; 2024 Your Name. All rights reserved.</p>
+        <p>Contact me at: <a href="mailto:abdullahnawaz.sheikh@ucalgary.ca">abdullahnawaz.sheikh@ucalgary.ca</a></p>
     </footer>
 </body>
 </html>
