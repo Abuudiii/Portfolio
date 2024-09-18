@@ -171,14 +171,40 @@ void dispenseWater(int volume) {
         </pre>
     </section>
 
+    <section>
+        <h2>Project Documentation</h2>
+        <p><strong>Autoirrigator:</strong> The Autoirrigator is a system that measures the soil moisture level and waters plants automatically when the moisture level falls below a defined threshold. Users can input the desired amount of water to be dispensed using a 4x4 keypad, and an RGB LED shows the current soil moisture level.</p>
+        <p><strong>How the Code Works:</strong></p>
+        <ul>
+            <li><strong>Keypad Input:</strong> The 4x4 keypad allows users to enter the amount of water to be dispensed, with '*' used to reset the input and '#' used to trigger the water pump based on the soil moisture levels.</li>
+            <li><strong>Moisture Sensing:</strong> The soil moisture is measured using a moisture sensor connected to an analog pin. The sensor values are mapped to a percentage (0-100%) that reflects the soil moisture level, with 'wet' and 'dry' thresholds.</li>
+            <li><strong>RGB LED:</strong> The RGB LED displays different colors based on the soil moisture level:
+                <ul>
+                    <li>Red: 0-20% (dry)</li>
+                    <li>Yellow: 21-60% (moderate moisture)</li>
+                    <li>Green: 61-100% (sufficient moisture)</li>
+                </ul>
+            </li>
+            <li><strong>Water Pump:</strong> The water pump is triggered based on the input from the keypad and the moisture sensor. It dispenses water for a calculated amount of time based on the volume entered by the user.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Circuit Schematic</h2>
+        <p>The following image shows the circuit schematic for the Autoirrigator:</p>
+        <img src="path-to-your-circuit-schematic.png" alt="Circuit Schematic">
+        <!-- Instructions for uploading the image below -->
+        <p><strong>To upload your circuit schematic:</strong> You can replace the placeholder above with the actual path of your circuit schematic PNG file. Simply upload your image to the same directory as this HTML file, and update the 'src' attribute in the <img> tag to point to the correct file location.</p>
+    </section>
+
     <section class="video-container">
         <h2>Project Interaction Video</h2>
         <p>Watch the interaction with the Autoirrigator below:</p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/gkF5bci7Cm0?si=rjLVpxiCZvVkUPMG" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </section>
 
-    <footer>
-        <p>Contact me at: <a href="mailto:abdullahnawaz.sheikh@ucalgary.ca">abdullahnawaz.sheikh@ucalgary.ca</a></p>
-    </footer>
-</body>
-</html>
+    <section>
+        <h2>References</h2>
+        <p>Here are some helpful resources that were used during the project:</p>
+        <ul>
+            <li><a href="https://www.youtube.com/@Science.Buddies" target="_blank">Science Buddies YouTube Channel
