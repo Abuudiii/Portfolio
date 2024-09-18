@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Abdullah Nawaz Sheikh">
     <meta name="description" content="A0 Hello World - Tangible & Physical HCI">
-    <title>A0 Hello World Project - Abdullah Nawaz Sheikh</title>
+    <title>Projects by Abdullah Nawaz Sheikh</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -46,70 +46,129 @@
 </head>
 <body>
     <header>
-        <h1>A0 Hello World Project</h1>
-        <p>By Abdullah Nawaz Sheikh - CPSC 599/601 (Fall 2024)</p>
+        <h1>Projects by Abdullah Nawaz Sheikh</h1>
+        <p>CPSC 599/601 (Fall 2024)</p>
     </header>
 
     <section>
-        <h2>Project Title: LED Button Circuit</h2>
-        <p><strong>Short Description:</strong> A simple circuit consisting of an LED controlled by a button. The LED light is diffused with a creative surprise element.</p>
-    </section>
-
-    <section>
-        <h2>Concept Development and Final Artifact</h2>
-        <p>Here are some images showing the development of the concept and the final artifact:</p>
-        <img src="path-to-your-image1.jpg" alt="Concept Development Image 1">
-        <img src="path-to-your-image2.jpg" alt="Concept Development Image 2">
-    </section>
-
-    <section class="video-container">
-        <h2>Project Interaction Video</h2>
-        <p>Watch the interaction with the project below:</p>
-        <video controls>
-            <source src="path-to-your-video.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+        <h2>Project 1: Autoirrigator</h2>
+        <p><strong>Short Description:</strong> The Autoirrigator is an automated irrigation system that measures soil moisture levels and waters plants accordingly. It uses a keypad for user input and an RGB LED to visually indicate soil moisture levels.</p>
     </section>
 
     <section>
         <h2>Arduino Code</h2>
         <pre>
             <code>
-            // Arduino code for LED Button Circuit
-            int ledPin = 13;
-            int buttonPin = 2;
-            int buttonState = 0;
+// Autoirrigator Arduino Code
 
-            void setup() {
-                pinMode(ledPin, OUTPUT);
-                pinMode(buttonPin, INPUT);
-            }
+#include &lt;Keypad.h&gt;
 
-            void loop() {
-                buttonState = digitalRead(buttonPin);
-                if (buttonState == HIGH) {
-                    digitalWrite(ledPin, HIGH);
-                } else {
-                    digitalWrite(ledPin, LOW);
-                }
-            }
+const byte ROWS = 4;
+const byte COLS = 4;
+char keys[ROWS][COLS] = {
+  {'1', '2', '3', 'A'},
+  {'4', '5', '6', 'B'},
+  {'7', '8', '9', 'C'},
+  {'*', '0', '#', 'D'}
+};
+
+byte rowPins[ROWS] = {9, 8, 7, 6};
+byte colPins[COLS] = {5, 4, 3, 2};
+
+Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+
+int waterPumpPin = 10;
+int moistureSensorPin = A1;
+const int wet = 484;
+const int dry = 898;
+const int flowRate = 100;
+int targetWaterVolume = 0;
+int maxContainerVolume = 1000;
+int currentWaterLevel = 1000;
+const int moistureThreshold = 70;
+
+int redPin = 13;
+int greenPin = 11;
+int bluePin = 12;
+
+void setup() {
+  SerialUSB.begin(9600);
+  pinMode(waterPumpPin, OUTPUT);
+  digitalWrite(waterPumpPin, LOW);
+  pinMode(redPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
+}
+
+void loop() {
+  int moistureLevel = analogRead(moistureSensorPin);
+  int percentageMoisture = map(moistureLevel, wet, dry, 100, 0);
+
+  SerialUSB.print("Soil Moisture: ");
+  SerialUSB.print(percentageMoisture);
+  SerialUSB.println("%");
+
+  if (percentageMoisture <= 20) {
+    digitalWrite(redPin, HIGH);
+    digitalWrite(greenPin, LOW);
+    digitalWrite(bluePin, LOW);
+  } else if (percentageMoisture <= 60) {
+    digitalWrite(redPin, HIGH);
+    digitalWrite(greenPin, HIGH);
+    digitalWrite(bluePin, LOW);
+  } else {
+    digitalWrite(redPin, LOW);
+    digitalWrite(greenPin, HIGH);
+    digitalWrite(bluePin, LOW);
+  }
+
+  char key = keypad.getKey();
+  if (key) {
+    if (key == '*') {
+      targetWaterVolume = 0;
+      SerialUSB.println("Reset input.");
+    } else if (key == '#') {
+      if (percentageMoisture > moistureThreshold) {
+        SerialUSB.println("Moisture level is sufficient, no watering needed.");
+      } else if (targetWaterVolume > currentWaterLevel) {
+        SerialUSB.println("Not enough water in the container!");
+      } else {
+        SerialUSB.print("Dispensing ");
+        SerialUSB.print(targetWaterVolume);
+        SerialUSB.println(" mL of water.");
+        dispenseWater(targetWaterVolume);
+        currentWaterLevel -= targetWaterVolume;
+        SerialUSB.print("Remaining water: ");
+        SerialUSB.print(currentWaterLevel);
+        SerialUSB.println(" mL");
+      }
+    } else if (isDigit(key)) {
+      targetWaterVolume = targetWaterVolume * 10 + (key - '0');
+      SerialUSB.print("Current input: ");
+      SerialUSB.print(targetWaterVolume);
+      SerialUSB.println(" mL");
+      if (targetWaterVolume > maxContainerVolume) {
+        targetWaterVolume = maxContainerVolume;
+        SerialUSB.println("Max volume is 1000 mL.");
+      }
+    }
+  }
+  delay(100);
+}
+
+void dispenseWater(int volume) {
+  if (volume > 0 && volume <= 1000) {
+    int dispenseTime = (volume * 1000) / flowRate;
+    digitalWrite(waterPumpPin, HIGH);
+    delay(dispenseTime);
+    digitalWrite(waterPumpPin, LOW);
+    SerialUSB.println("Dispensing complete.");
+  } else {
+    SerialUSB.println("Invalid water volume.");
+  }
+}
             </code>
         </pre>
-    </section>
-
-    <section>
-        <h2>Circuit Schematic</h2>
-        <p>Below is the circuit schematic:</p>
-        <img src="path-to-your-circuit-schematic.jpg" alt="Circuit Schematic">
-    </section>
-
-    <section>
-        <h2>Reference Materials</h2>
-        <p>Here are some reference materials I used for the project:</p>
-        <ul>
-            <li>Arduino Documentation: <a href="https://www.arduino.cc/en/Guide/HomePage" target="_blank">Arduino Official Guide</a></li>
-            <li>Button and LED Circuit Tutorial: <a href="https://www.example.com" target="_blank">Example Tutorial</a></li>
-        </ul>
     </section>
 
     <footer>
