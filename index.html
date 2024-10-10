@@ -90,16 +90,18 @@
         <p>CPSC 599/601 (Fall 2024)</p>
     </header>
 
-    <section>
-        <h2>Project 1: Autoirrigator</h2>
-        <p><strong>Short Description:</strong> The Autoirrigator is an automated irrigation system that measures soil moisture levels and waters plants accordingly. It uses a keypad for user input and an RGB LED to visually indicate soil moisture levels.</p>
-    </section>
+    <div id="projects-container"></div>
 
-    <section>
-        <h2>Arduino Code</h2>
-        <pre>
-            <code>
-#include "<Keypad.h>"
+    <footer>
+        <p>&copy; 2024 Abdullah Nawaz Sheikh. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const projects = [
+            {
+                title: "Autoirrigator",
+                description: "The Autoirrigator is an automated irrigation system that measures soil moisture levels and waters plants accordingly. It uses a keypad for user input and an RGB LED to visually indicate soil moisture levels.",
+                code: `#include "<Keypad.h>"
 
 // Define keypad dimensions and keys
 const byte ROWS = 4;
@@ -233,54 +235,37 @@ void dispenseWater(int volume) {
 void setLEDColor(int redValue, int greenValue, int blueValue) {
   analogWrite(redPin, redValue);
   analogWrite(greenPin, greenValue);
-  analogWrite(bluePin, blueValue);
+  analogWrite(blueValue, blueValue);
 }
+                `,
+                schematic: "https://raw.githubusercontent.com/Abuudiii/Portfolio/main/Schematic.png",
+                video: "https://www.youtube.com/embed/gkF5bci7Cm0?si=rjLVpxiCZvVkUPMG"
+            }
+            // Add more project objects here
+        ];
 
-            </code>
-        </pre>
-    </section>
+        function renderProjects() {
+            const projectsContainer = document.getElementById('projects-container');
+            projects.forEach(project => {
+                const section = document.createElement('section');
 
-    <section>
-        <h2>Project Documentation</h2>
-        <p><strong>Autoirrigator:</strong> The Autoirrigator is a system that measures the soil moisture level and waters plants automatically when the moisture level falls below a defined threshold. Users can input the desired amount of water to be dispensed using a 4x4 keypad, and an RGB LED shows the current soil moisture level.</p>
-        <p><strong>How the Code Works:</strong></p>
-        <ul>
-            <li><strong>Keypad Input:</strong> The 4x4 keypad allows users to enter the amount of water to be dispensed, with '*' used to reset the input and '#' used to trigger the water pump based on the soil moisture levels.</li>
-            <li><strong>Moisture Sensing:</strong> The soil moisture is measured using a moisture sensor connected to an analog pin. The sensor values are mapped to a percentage (0-100%) that reflects the soil moisture level, with 'wet' and 'dry' thresholds.</li>
-            <li><strong>RGB LED:</strong> The RGB LED displays different colors based on the soil moisture level:
-                <ul>
-                    <li>Red: 0-20% (dry)</li>
-                    <li>Yellow: 21-60% (moderate moisture)</li>
-                    <li>Green: 61-100% (sufficient moisture)</li>
-                </ul>
-            </li>
-            <li><strong>Water Pump:</strong> The water pump is triggered based on the input from the keypad and the moisture sensor. It dispenses water for a calculated amount of time based on the volume entered by the user.</li>
-        </ul>
-    </section>
+                section.innerHTML = `
+                    <h2>Project: ${project.title}</h2>
+                    <p><strong>Short Description:</strong> ${project.description}</p>
+                    <pre><code>${project.code}</code></pre>
+                    <h2>Circuit Schematic</h2>
+                    <img src="${project.schematic}" alt="Circuit Schematic">
+                    <div class="video-container">
+                        <h2>Project Interaction Video</h2>
+                        <iframe width="560" height="315" src="${project.video}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                `;
 
-    <section>
-        <h2>Circuit Schematic</h2>
-        <p>The following image shows the circuit schematic for the Autoirrigator:</p>
-        <img src="https://raw.githubusercontent.com/Abuudiii/Portfolio/main/Schematic.png" alt="Circuit Schematic">
-    </section>
+                projectsContainer.appendChild(section);
+            });
+        }
 
-    <section class="video-container">
-        <h2>Project Interaction Video</h2>
-        <p>Watch the interaction with the Autoirrigator below:</p>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/gkF5bci7Cm0?si=rjLVpxiCZvVkUPMG" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    </section>
-
-    <section>
-        <h2>References</h2>
-        <p>Here are some helpful resources that were used during the project:</p>
-        <ul>
-            <li><a href="https://www.youtube.com/@Science.Buddies" target="_blank">Science Buddies YouTube Channel</a></li>
-            <li><a href="https://www.youtube.com/@BasonTech" target="_blank">BasonTech YouTube Channel</a></li>
-        </ul>
-    </section>
-
-    <footer>
-        <p>&copy; 2024 Abdullah Nawaz Sheikh. All rights reserved.</p>
-    </footer>
+        document.addEventListener('DOMContentLoaded', renderProjects);
+    </script>
 </body>
 </html>
