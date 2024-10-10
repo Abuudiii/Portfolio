@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portobeats Project</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #1c1c1c;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        header, footer {
+            text-align: center;
+            padding: 20px;
+        }
+        header {
+            border-bottom: 1px solid #555;
+        }
+        footer {
+            border-top: 1px solid #555;
+            font-size: 0.8em;
+            color: #777;
+        }
+        section {
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        h1, h2 {
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        p, pre {
+            color: #d0d0d0;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #ffffff;
+        }
+        img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 10px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        iframe {
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Portobeats Project</h1>
+        <a href="index.html">Back to Portfolio</a>
+    </header>
+
+    <section>
+        <h2>Project Overview</h2>
+        <p>Portobeats is a wearable glove system that allows users to assign different musical instruments to each finger tap on any surface, enabling them to create beats interactively. This project combines wearable technology and music production to create a tangible interaction experience that encourages creativity and exploration.</p>
+    </section>
+
+    <section>
+        <h2>Interaction Details</h2>
+        <p>Each glove is equipped with force-sensing resistors that can detect finger taps on any surface. The system is connected to a MIDI controller, allowing users to assign specific instruments or drum sounds to each finger. When a user taps a surface with a particular finger, the corresponding sound is produced, creating a musical beat. This makes it possible to generate dynamic and engaging rhythms using natural hand movements.</p>
+    </section>
+
+    <section>
+        <h2>Project Code</h2>
+        <pre><code>
+#include &lt;MIDI.h&gt;
+#include &lt;CapacitiveSensor.h&gt;
+
+// Define pin connections for capacitive sensors
+CapacitiveSensor cs1 = CapacitiveSensor(4, 2); // Thumb
+CapacitiveSensor cs2 = CapacitiveSensor(4, 3); // Index finger
+CapacitiveSensor cs3 = CapacitiveSensor(4, 5); // Middle finger
+CapacitiveSensor cs4 = CapacitiveSensor(4, 6); // Ring finger
+CapacitiveSensor cs5 = CapacitiveSensor(4, 7); // Pinky finger
+
+MIDI_CREATE_DEFAULT_INSTANCE();
+
+void setup() {
+    MIDI.begin(MIDI_CHANNEL_OMNI);
+    Serial.begin(9600);
+}
+
+void loop() {
+    long thumbValue = cs1.capacitiveSensor(30);
+    long indexValue = cs2.capacitiveSensor(30);
+    long middleValue = cs3.capacitiveSensor(30);
+    long ringValue = cs4.capacitiveSensor(30);
+    long pinkyValue = cs5.capacitiveSensor(30);
+
+    if (thumbValue > 1000) {
+        MIDI.sendNoteOn(36, 127, 1); // Kick drum
+        delay(100);
+        MIDI.sendNoteOff(36, 0, 1);
+    }
+    if (indexValue > 1000) {
+        MIDI.sendNoteOn(38, 127, 1); // Snare drum
+        delay(100);
+        MIDI.sendNoteOff(38, 0, 1);
+    }
+    if (middleValue > 1000) {
+        MIDI.sendNoteOn(42, 127, 1); // Hi-hat
+        delay(100);
+        MIDI.sendNoteOff(42, 0, 1);
+    }
+    if (ringValue > 1000) {
+        MIDI.sendNoteOn(46, 127, 1); // Open hi-hat
+        delay(100);
+        MIDI.sendNoteOff(46, 0, 1);
+    }
+    if (pinkyValue > 1000) {
+        MIDI.sendNoteOn(49, 127, 1); // Crash cymbal
+        delay(100);
+        MIDI.sendNoteOff(49, 0, 1);
+    }
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>Circuit Schematic</h2>
+        <p>The following image shows the circuit schematic for Portobeats, which uses force-sensing resistors connected to an Arduino board to detect finger taps.</p>
+        <img src="Portobeats_Schematic.png" alt="Portobeats Circuit Schematic">
+    </section>
+
+    <section>
+        <h2>Interaction Video</h2>
+        <p>Watch the interaction with Portobeats below:</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/sample-video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </section>
+
+    <section>
+        <h2>Reference Materials</h2>
+        <ul>
+            <li><a href="https://www.arduino.cc/en/Reference/ForceSensor" target="_blank">Arduino Force Sensing Resistor Reference</a></li>
+            <li><a href="https://www.midi.org/" target="_blank">MIDI Organization</a></li>
+            <li><a href="https://www.youtube.com/@Science.Buddies" target="_blank">Science Buddies YouTube Channel</a></li>
+        </ul>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Abdullah Nawaz Sheikh. All rights reserved.</p>
+    </footer>
+</body>
+</html>
