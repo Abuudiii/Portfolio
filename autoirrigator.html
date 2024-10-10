@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="styles.css">
     <style>
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #1c1c1c;
-            color: #e0e0e0;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #000;
+            color: #00FF00;
             margin: 0;
             padding: 20px;
             line-height: 1.6;
@@ -19,49 +19,70 @@
             padding: 20px;
         }
         header {
-            border-bottom: 1px solid #555;
+            border-bottom: 1px solid #00FF00;
         }
         footer {
-            border-top: 1px solid #555;
+            border-top: 1px solid #00FF00;
             font-size: 0.8em;
-            color: #777;
+            color: #008000;
         }
         section {
-            background-color: #2a2a2a;
+            background-color: #001f00;
             padding: 20px;
             border-radius: 12px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 255, 0, 0.2);
             max-width: 800px;
             margin-left: auto;
             margin-right: auto;
         }
         h1, h2 {
-            color: #ffffff;
+            color: #00FF00;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
         p, pre {
-            color: #d0d0d0;
+            color: #00FF00;
+        }
+        pre {
+            text-align: left;
+            overflow-x: auto;
+            background-color: #002200;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 255, 0, 0.3);
         }
         a {
-            color: #4CAF50;
+            color: #00FF00;
             text-decoration: none;
         }
         a:hover {
-            color: #ffffff;
+            color: #66FF66;
         }
         img {
             max-width: 100%;
             border-radius: 8px;
             margin: 10px 0;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 8px rgba(0, 255, 0, 0.3);
         }
         iframe {
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 8px rgba(0, 255, 0, 0.3);
             max-width: 100%;
+        }
+        .video-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        ul {
+            color: #00FF00;
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul li::before {
+            content: '>';
+            color: #00FF00;
+            padding-right: 10px;
         }
     </style>
 </head>
@@ -217,16 +238,19 @@ void setLEDColor(int redValue, int greenValue, int blueValue) {
 
     <section>
         <h2>Circuit Schematic</h2>
-        <img src="Schematic.png" alt="Circuit Schematic">
+        <div style="text-align: center;">
+            <p>The following image shows the circuit schematic for the Autoirrigator:</p>
+            <img src="https://raw.githubusercontent.com/Abuudiii/Portfolio/main/Schematic.png" alt="Circuit Schematic">
+        </div>
     </section>
 
-    <section>
-        <h2>Interaction Video</h2>
+    <section class="video-container">
+        <h2>Project Interaction Video</h2>
+        <p>Watch the interaction with the Autoirrigator below:</p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/gkF5bci7Cm0?si=rjLVpxiCZvVkUPMG" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </section>
 
-    <footer>
-        <p>&copy; 2024 Abdullah Nawaz Sheikh. All rights reserved.</p>
-    </footer>
-</body>
-</html>
+    <section>
+        <h2>References</h2>
+        <ul>
+            <li><a href="https://www.youtube.com/@Science.Buddies" target="_blank">Science Buddies YouTube
