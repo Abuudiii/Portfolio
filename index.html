@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Abdullah Nawaz Sheikh">
-    <meta name="description" content="A0 Hello World - Tangible & Physical HCI">
+    <meta name="description" content="Project Portfolio">
     <title>Projects by Abdullah Nawaz Sheikh</title>
     <style>
         body {
@@ -13,66 +13,28 @@
             color: #e0e0e0;
             margin: 0;
             padding: 20px;
-            line-height: 1.6;
         }
         header {
             text-align: center;
             padding: 20px;
             border-bottom: 1px solid #555;
         }
-        section {
+        .project-card {
             background-color: #2a2a2a;
             padding: 20px;
             border-radius: 12px;
             margin-bottom: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: transform 0.2s;
+            text-align: center;
         }
-        section:hover {
+        .project-card:hover {
             transform: translateY(-5px);
         }
         h1, h2 {
             color: #ffffff;
             text-transform: uppercase;
             letter-spacing: 2px;
-        }
-        p, ul, pre {
-            color: #d0d0d0;
-        }
-        ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        ul li::before {
-            content: '⚬';
-            color: #4CAF50;
-            padding-right: 10px;
-        }
-        code {
-            background-color: #333;
-            color: #4CAF50;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-        img {
-            max-width: 100%;
-            border-radius: 8px;
-            margin: 10px 0;
-        }
-        .video-container {
-            text-align: center;
-            margin: 20px 0;
-        }
-        iframe {
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-        footer {
-            text-align: center;
-            padding: 10px;
-            font-size: 0.8em;
-            color: #777;
-            border-top: 1px solid #555;
         }
         a {
             color: #4CAF50;
@@ -100,168 +62,25 @@
         const projects = [
             {
                 title: "Autoirrigator",
-                description: "The Autoirrigator is an automated irrigation system that measures soil moisture levels and waters plants accordingly. It uses a keypad for user input and an RGB LED to visually indicate soil moisture levels.",
-                code: `#include "<Keypad.h>"
-
-// Define keypad dimensions and keys
-const byte ROWS = 4;
-const byte COLS = 4;
-char keys[ROWS][COLS] = {
-  {'1', '2', '3', 'A'},
-  {'4', '5', '6', 'B'},
-  {'7', '8', '9', 'C'},
-  {'*', '0', '#', 'D'}
-};
-
-// Define pin connections for keypad
-byte rowPins[ROWS] = {9, 8, 7, 6};    // Connect to the row pinouts of the keypad
-byte colPins[COLS] = {5, 4, 3, 2};    // Connect to the column pinouts of the keypad
-
-Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
-
-int waterPumpPin = 10;  // Water pump connected to pin 10
-int moistureSensorPin = A1;  // Soil moisture sensor connected to pin A1
-const int wet = 484;  // Sensor value for wet soil
-const int dry = 898;  // Sensor value for dry soil
-const int flowRate = 100;  // Pump flow rate in mL per second (adjust according to your pump)
-int targetWaterVolume = 0;  // Amount of water to dispense
-int maxContainerVolume = 1000;  // Maximum water container volume in mL
-int currentWaterLevel = 1000;  // Track the current amount of water in the container
-const int moistureThreshold = 70;  // Moisture threshold above which watering is not required
-
-// RGB LED pins
-int redPin = 13;
-int greenPin = 11;
-int bluePin = 12;
-
-void setup() {
-  SerialUSB.begin(9600);
-  pinMode(waterPumpPin, OUTPUT);
-  digitalWrite(waterPumpPin, LOW);
-
-  // RGB LED pin setup
-  pinMode(redPin, OUTPUT);
-  pinMode(greenPin, OUTPUT);
-  pinMode(bluePin, OUTPUT);
-}
-
-void loop() {
-  // Read soil moisture level
-  int moistureLevel = analogRead(moistureSensorPin);
-  int percentageMoisture = map(moistureLevel, wet, dry, 100, 0);
-
-  // Print the soil moisture percentage
-  SerialUSB.print("Soil Moisture: ");
-  SerialUSB.print(percentageMoisture);
-  SerialUSB.println("%");
-
-
-  // Set RGB LED color based on soil moisture
-  if (percentageMoisture <= 20) {
-    // Red for 0-20%
-    digitalWrite(redPin, HIGH);
-    digitalWrite(greenPin, LOW);
-    digitalWrite(bluePin, LOW);
-
-  } else if (percentageMoisture <= 60) {
-    // Yellow for 21-60% (Red + Green)
-
-    digitalWrite(redPin, HIGH);
-    digitalWrite(greenPin, HIGH);
-    digitalWrite(bluePin, LOW);
-
-  } else {
-    // Green for 61-100%
-    digitalWrite(redPin, LOW);
-    digitalWrite(greenPin, HIGH);
-    digitalWrite(bluePin, LOW);
-  }
-
-  // Keypad input handling
-  char key = keypad.getKey(); // Get the key press
-
-  if (key) {
-    // If the user presses '*', reset the input
-    if (key == '*') {
-      targetWaterVolume = 0;
-      SerialUSB.println("Reset input.");
-    }
-    // If the user presses '#', start dispensing water only if moisture level is below the threshold
-    else if (key == '#') {
-      if (percentageMoisture > moistureThreshold) {
-        SerialUSB.println("Moisture level is sufficient, no watering needed.");
-      } else if (targetWaterVolume > currentWaterLevel) {
-        SerialUSB.println("Not enough water in the container!");
-      } else {
-        SerialUSB.print("Dispensing ");
-        SerialUSB.print(targetWaterVolume);
-        SerialUSB.println(" mL of water.");
-        dispenseWater(targetWaterVolume);
-        currentWaterLevel -= targetWaterVolume;  // Update current water level
-        SerialUSB.print("Remaining water: ");
-        SerialUSB.print(currentWaterLevel);
-        SerialUSB.println(" mL");
-      }
-    }
-    // Otherwise, update the targetWaterVolume (ensure it's within the limit)
-    else if (isDigit(key)) {
-      targetWaterVolume = targetWaterVolume * 10 + (key - '0');
-      SerialUSB.print("Current input: ");
-      SerialUSB.print(targetWaterVolume);
-      SerialUSB.println(" mL");
-      if (targetWaterVolume > maxContainerVolume) {  // Limit to 1000 mL
-        targetWaterVolume = maxContainerVolume;
-        SerialUSB.println("Max volume is 1000 mL.");
-      }
-    }
-  }
-  delay(100); // Adjust as necessary for debounce
-}
-
-// Function to control the pump and dispense the desired amount of water
-void dispenseWater(int volume) {
-  if (volume > 0 && volume <= 1000) {
-    int dispenseTime = (volume * 1000) / flowRate;  // Time to dispense the desired volume (ms)
-    digitalWrite(waterPumpPin, HIGH);  // Turn on the pump
-    delay(dispenseTime);               // Keep the pump on for the calculated time
-    digitalWrite(waterPumpPin, LOW);   // Turn off the pump
-    SerialUSB.println("Dispensing complete.");
-  } else {
-    SerialUSB.println("Invalid water volume.");
-  }
-}
-
-// Function to set the RGB LED color
-void setLEDColor(int redValue, int greenValue, int blueValue) {
-  analogWrite(redPin, redValue);
-  analogWrite(greenPin, greenValue);
-  analogWrite(blueValue, blueValue);
-}
-                `,
-                schematic: "https://raw.githubusercontent.com/Abuudiii/Portfolio/main/Schematic.png",
-                video: "https://www.youtube.com/embed/gkF5bci7Cm0?si=rjLVpxiCZvVkUPMG"
+                description: "The Autoirrigator is an automated irrigation system that measures soil moisture levels and waters plants accordingly.",
+                link: "autoirrigator.html" // Link to the project detail page
             }
-            // Add more project objects here
+            // Add more project objects here with their corresponding links
         ];
 
         function renderProjects() {
             const projectsContainer = document.getElementById('projects-container');
             projects.forEach(project => {
-                const section = document.createElement('section');
+                const projectCard = document.createElement('div');
+                projectCard.className = 'project-card';
 
-                section.innerHTML = `
-                    <h2>Project: ${project.title}</h2>
-                    <p><strong>Short Description:</strong> ${project.description}</p>
-                    <pre><code>${project.code}</code></pre>
-                    <h2>Circuit Schematic</h2>
-                    <img src="${project.schematic}" alt="Circuit Schematic">
-                    <div class="video-container">
-                        <h2>Project Interaction Video</h2>
-                        <iframe width="560" height="315" src="${project.video}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
+                projectCard.innerHTML = `
+                    <h2>${project.title}</h2>
+                    <p>${project.description}</p>
+                    <a href="${project.link}">Learn More</a>
                 `;
 
-                projectsContainer.appendChild(section);
+                projectsContainer.appendChild(projectCard);
             });
         }
 
