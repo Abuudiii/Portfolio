@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinetic Flower Project</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #1c1c1c;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        header, footer {
+            text-align: center;
+            padding: 20px;
+        }
+        header {
+            border-bottom: 1px solid #555;
+        }
+        footer {
+            border-top: 1px solid #555;
+            font-size: 0.8em;
+            color: #777;
+        }
+        section {
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        h1, h2 {
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        p {
+            color: #d0d0d0;
+            text-align: center;
+        }
+        pre {
+            color: #d0d0d0;
+            text-align: left;
+            overflow-x: auto;
+            background-color: #333;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #ffffff;
+        }
+        img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 10px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        iframe {
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            max-width: 100%;
+        }
+        .center-content {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Kinetic Flower Project</h1>
+        <a href="index.html">Back to Portfolio</a>
+    </header>
+
+    <section>
+        <h2>Project Overview</h2>
+        <p>The Kinetic Flower is an interactive installation that blooms based on the user's focus level. Using facial detection technology, the system detects how long the user is looking at their screen, and the flower gradually blooms to represent sustained focus. The project is designed to encourage mindfulness and reward focused work sessions.</p>
+    </section>
+
+    <section>
+        <h2>Concept</h2>
+        <p>The Kinetic Flower combines computer vision and hardware control to create an immersive visual representation of concentration. The longer you focus on your work, the more the flower blooms, offering a tangible measure of productivity and focus. If focus is lost, the flower gradually closes, serving as a reminder to stay on task.</p>
+    </section>
+
+    <section>
+        <h2>Interaction Details</h2>
+        <p>The system utilizes a webcam to track the user's facial activity and determine whether they are looking at the screen. The Arduino-controlled servo motor gradually moves the petals of the flower to represent the user's focus level. This is done using an ESP32 microcontroller that communicates with the computer via serial connection.</p>
+    </section>
+
+    <section>
+        <h2>Project Code</h2>
+        <pre><code>import cv2
+import time
+import serial
+
+# Set up face detection
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+cap = cv2.VideoCapture(0)
+
+# Set up serial connection to ESP32
+esp32 = serial.Serial('/dev/tty.usbserial-0001', 115200)  # Replace with your ESP32 port
+
+# Variables to track screen time and servo position
+screen_time = 0
+current_position = 0
+start_position = 0  # closed position
+end_position = 180  # fully bloomed position
+increment = 1       # how much the servo moves with each step
+
+try:
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+
+        # Check if a face is detected and adjust screen_time
+        if len(faces) > 0:
+            screen_time += 1  # Increment screen time if a face is detected
+        else:
+            screen_time = max(screen_time - 1, 0)  # Slowly decrease if no face is detected
+
+        # Calculate target position based on screen time
+        target_position = start_position + int((end_position - start_position) * min(screen_time / 100, 1))
+
+        # Move servo toward target position gradually
+        if current_position < target_position:
+            current_position = min(current_position + increment, target_position)
+        elif current_position > target_position:
+            current_position = max(current_position - increment, target_position)
+
+        # Send current position to ESP32
+        esp32.write(f"{current_position}\n".encode())
+        print(f"Servo Position Sent: {current_position}")
+
+        time.sleep(0.1)  # Short delay for smooth movement
+
+except KeyboardInterrupt:
+    print("Program interrupted")
+
+finally:
+    cap.release()
+    esp32.close()
+    cv2.destroyAllWindows()
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>Circuit Schematic</h2>
+        <div class="center-content">
+            <p>The following image shows the circuit schematic for the Kinetic Flower, which uses an ESP32 microcontroller to control the servo motor based on user focus level.</p>
+            <img src="kineticflowerschematic.png" alt="Kinetic Flower Circuit Schematic">
+        </div>
+    </section>
+
+    <section>
+        <h2>Interaction Video</h2>
+        <div class="center-content">
+            <p>Watch the interaction with the Kinetic Flower below:</p>
+            <video controls>
+                <source src="kineticflower.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </section>
+
+    <section>
+        <h2>Reference Materials</h2>
+        <ul>
+            <li><a href="https://opencv.org/" target="_blank">OpenCV Documentation</a></li>
+            <li><a href="https://www.arduino.cc/reference/en/" target="_blank">Arduino Reference</a></li>
+        </ul>
+    </section>
+
+</body>
+</html>
