@@ -78,18 +78,18 @@
 </head>
 <body>
     <header>
-        <h1>Kinetic Flower Project</h1>
+        <h1>ThriveMind</h1>
         <a href="index.html">Back to Portfolio</a>
     </header>
 
     <section>
         <h2>Project Overview</h2>
-        <p>The Kinetic Flower is an interactive installation that blooms based on the user's focus level. Using facial detection technology, the system detects how long the user is looking at their screen, and the flower gradually blooms to represent sustained focus. The project is designed to encourage mindfulness and reward focused work sessions.</p>
+        <p>The ThriveMind is an interactive installation that blooms based on the user's focus level. Using facial detection technology, the system detects how long the user is looking at their screen, and the flower gradually blooms to represent sustained focus. The project is designed to encourage mindfulness and reward focused work sessions.</p>
     </section>
 
     <section>
         <h2>Concept</h2>
-        <p>The Kinetic Flower combines computer vision and hardware control to create an immersive visual representation of concentration. The longer you focus on your work, the more the flower blooms, offering a tangible measure of productivity and focus. If focus is lost, the flower gradually closes, serving as a reminder to stay on task.</p>
+        <p>The ThriveMind combines computer vision and hardware control to create an immersive visual representation of concentration. The longer you focus on your work, the more the flower blooms, offering a tangible measure of productivity and focus. If focus is lost, the flower gradually closes, serving as a reminder to stay on task.</p>
     </section>
 
     <section>
@@ -99,7 +99,10 @@
 
     <section>
         <h2>Project Code</h2>
-        <pre><code>import cv2
+        <pre><code>
+Python Code:
+            
+import cv2
 import time
 import serial
 
@@ -154,6 +157,31 @@ finally:
     cap.release()
     esp32.close()
     cv2.destroyAllWindows()
+
+Arduino IDE Code:
+            
+#include <ESP32Servo.h>
+#include <ESP32PWM.h>
+
+Servo myServo;
+int pos = 0;  // Variable to store the servo position
+
+void setup() {
+    Serial.begin(115200);
+    myServo.attach(23);  // Replace with the pin connected to your servo
+}
+
+void loop() {
+    if (Serial.available() > 0) {
+        int screenTime = Serial.parseInt();  // Read the integer value sent from MacBook
+
+        // Map screen time to a 0-180 degree range for the servo
+        pos = map(screenTime, 0, 100, 0, 180);
+        myServo.write(pos);
+        delay(15);  // Allow time for the servo to reach the position
+    }
+}
+
         </code></pre>
     </section>
 
