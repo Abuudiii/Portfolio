@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ThriveMind</title>
+    <title>ThriveMind Project</title>
     <link rel="stylesheet" href="styles.css">
     <style>
         body {
@@ -96,7 +96,7 @@
 
     <section>
         <h2>Project Overview</h2>
-        <p>The ThriveMind project is an innovative interactive installation designed to promote and reward focused work sessions through a visual representation of mindfulness. By utilizing facial detection technology, ThriveMind monitors how long the user remains focused on their screen and responds by blooming a flower as a symbol of sustained concentration. This tangible visual feedback encourages users to maintain focus, thus cultivating better work habits and fostering mindfulness during their tasks. The gradual blooming of the flower serves as a metaphor for the growth and benefits of sustained attention.</p>
+        <p>The ThriveMind project is an innovative interactive installation designed to promote and reward focused work sessions through a visual representation of mindfulness. By utilizing facial detection technology, ThriveMind monitors how long the user remains focused on their screen and responds by blooming a flower as a symbol of sustained concentration. This tangible visual feedback encourages users to maintain focus, thus cultivating better work habits and fostering mindfulness during their tasks. The gradual blooming of the flower serves as a metaphor for the growth and benefits of sustained attention, providing users with a clear indication of their productivity.</p>
     </section>
 
     <section>
@@ -105,12 +105,12 @@
             <img src="ThriveMindConcept1.jpg" alt="ThriveMind Concept 1" style="width: 45%; height: auto;">
             <img src="ThriveMindConcept2.JPG" alt="ThriveMind Concept 2" style="width: 45%; height: auto;">
         </div>
-        <p>The concept behind ThriveMind lies at the intersection of technology, mindfulness, and creativity. By combining computer vision with hardware control, ThriveMind aims to create an immersive experience that visually represents the user's level of focus. The flower bloom metaphor serves to provide users with immediate feedback on their concentration, reinforcing positive behaviors. As users concentrate, the flower gradually opens, symbolizing productivity and growth. Conversely, when focus is lost, the flower gently closes, serving as a subtle reminder to bring attention back to the task at hand. This design approach makes it easier to internalize the importance of focus and visually track one’s progress.</p>
+        <p>The concept behind ThriveMind lies at the intersection of technology, mindfulness, and creativity. By combining computer vision with hardware control, ThriveMind aims to create an immersive experience that visually represents the user's level of focus. The flower bloom metaphor serves to provide users with immediate feedback on their concentration, reinforcing positive behaviors. As users concentrate, the flower gradually opens, symbolizing productivity and growth. Conversely, when focus is lost, the flower gently closes, serving as a reminder to bring attention back to the task at hand. This design approach makes it easier to internalize the importance of focus and track progress in a visual and meaningful way.</p>
     </section>
 
     <section>
         <h2>Interaction Details</h2>
-        <p>The interaction model of ThriveMind is straightforward but impactful. The system uses a webcam to monitor the user's facial activity, specifically focusing on eye contact with the screen. If the user maintains eye contact, the system interprets this as focused attention. The ESP32 microcontroller and a servo motor are then employed to translate this data into physical movement, gradually opening or closing the flower petals. This interactive, gradual physical change offers users a direct visual representation of their level of engagement. The ESP32 facilitates seamless communication between the computer and the hardware, ensuring that the response is real-time and intuitive.</p>
+        <p>The interaction model of ThriveMind is straightforward but impactful. The system uses a webcam to monitor the user's facial activity, specifically focusing on eye contact with the screen. If the user maintains eye contact, the system interprets this as focused attention. The ESP32 microcontroller and an Arduino-controlled servo motor are then employed to translate this data into physical movement, gradually opening or closing the flower petals. This interactive, gradual physical change offers users a direct visual representation of their level of engagement. The ESP32 facilitates seamless communication between the computer and the hardware, ensuring that the response is real-time, intuitive, and engaging.</p>
     </section>
 
     <section>
@@ -204,7 +204,7 @@ void loop() {
     <section>
         <h2>Circuit Schematic</h2>
         <div class="center-content">
-            <p>The electronics behind ThriveMind are powered by an ESP32 microcontroller, which serves as the heart of the system, managing the servo motor that controls the petals of the flower. The schematic highlights how each component is interconnected to bring the concept to life. The servo motor receives commands from the ESP32, which in turn gets its instructions based on the user’s interaction with the screen. The circuit schematic demonstrates the simplicity and effectiveness of the design, showing how just a few electronic components can come together to create an expressive and engaging interactive experience.</p>
+            <p>The electronics behind ThriveMind are powered by an ESP32 microcontroller, which serves as the heart of the system, managing the servo motor that controls the petals of the flower. The schematic highlights how each component is interconnected to bring the concept to life. The servo motor receives commands from the ESP32, which in turn gets its instructions based on the user’s interaction with the screen. The circuit schematic demonstrates the simplicity and effectiveness of the design, showing how a few carefully chosen electronic components can create an expressive and engaging interactive experience.</p>
             <img src="ThriveMindSchematic.png" alt="ThriveMind Circuit Schematic">
         </div>
     </section>
@@ -212,7 +212,7 @@ void loop() {
     <section>
         <h2>Interaction Video</h2>
         <div class="center-content">
-            <p>Watch the interaction with the Kinetic Flower below:</p>
+            <p>Watch the interaction with ThriveMind below:</p>
             <video controls>
                 <source src="ThriveMindVideo.mp4" type="video/mp4">
                 Your browser does not support the video tag.
