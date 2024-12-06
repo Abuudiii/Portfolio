@@ -116,60 +116,120 @@
     <section>
         <h2>Project Code</h2>
         <pre><code>
-ESP32 Sender Code (Bracelet 1):
-            
-#include <esp_now.h>
 #include <WiFi.h>
+#include <esp_now.h>
 
-uint8_t receiverAddress[] = {0x24, 0x6F, 0x28, 0xD1, 0xD5, 0x38}; // Replace with Bracelet 2 MAC
-#define FSR_PIN 34
+
+// Define pins
+#define MOTOR_PIN 18          // GPIO pin connected to the transistor base
+#define FORCE_SENSOR_PIN 34  // Analog pin connected to the force sensor
+const int threshold = 50;  // Adjust based on your sensor readings
+
+
+// Peer MAC address (replace with the other device's MAC address) cc:db:a7:32:1c:bc
+uint8_t peerMAC[] = {0xfc, 0xf5, 0xc4, 0x03, 0xbe, 0xe0}; // Example MAC
+char message[250];
+
+
+
+// Callback function to handle received messages
+void onDataReceived(const esp_now_recv_info_t* recvInfo, const uint8_t* data, int dataLen) {
+  Serial.print("Message received from: ");
+  for (int i = 0; i < 6; i++) {
+    Serial.printf("%02X", recvInfo->src_addr[i]);
+    if (i < 5) Serial.print(":");
+  }
+  Serial.println();
+
+  // Process the received data
+  char message[dataLen + 1];
+  memcpy(message, data, dataLen);
+  message[dataLen] = '\0';  // Null-terminate the message
+
+  Serial.printf("Message: %s\n", message);
+  if (strcmp(message, "ON") == 0) {
+    digitalWrite(MOTOR_PIN, HIGH);
+  }
+  else if (strcmp(message, "OFF") == 0) {
+    digitalWrite(MOTOR_PIN, LOW);
+  }
+}
+
+// Callback function to handle message sending status
+void onDataSent(const uint8_t* macAddr, esp_now_send_status_t status) {
+  Serial.print("Last message sent to: ");
+  for (int i = 0; i < 6; i++) {
+    Serial.printf("%02X", macAddr[i]);
+    if (i < 5) Serial.print(":");
+  }
+  Serial.print(" Status: ");
+  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Success" : "Fail");
+}
+
+
+
 
 void setup() {
-    Serial.begin(115200);
-    WiFi.mode(WIFI_STA);
-    esp_now_init();
-    esp_now_peer_info_t peerInfo;
-    memcpy(peerInfo.peer_addr, receiverAddress, 6);
-    peerInfo.channel = 0;
-    peerInfo.encrypt = false;
-    esp_now_add_peer(&peerInfo);
+  Serial.begin(9600);
+  // Set up the motor control pin
+  pinMode(MOTOR_PIN, OUTPUT);
+  digitalWrite(MOTOR_PIN, LOW);  // Ensure motor is off at startup
+
+  // Initialize Wi-Fi in station mode
+  WiFi.mode(WIFI_STA);
+  Serial.println("Wi-Fi initialized in STA mode");
+
+   // Initialize ESP-NOW
+  if (esp_now_init() != ESP_OK) {
+    Serial.println("ESP-NOW initialization failed!");
+    return;
+  }
+  Serial.println("ESP-NOW initialized");
+
+  // Register callback functions
+  esp_now_register_recv_cb(onDataReceived);
+  esp_now_register_send_cb(onDataSent);
+
+  // Register the peer
+  esp_now_peer_info_t peerInfo;
+  memcpy(peerInfo.peer_addr, peerMAC, 6);
+  peerInfo.channel = WiFi.channel();  // Use default Wi-Fi channel
+  peerInfo.encrypt = false;
+    if (esp_now_add_peer(&peerInfo) != ESP_OK) {
+    Serial.println("Failed to add peer");
+    return;
+  }
+  Serial.println("Peer added");
+
 }
 
 void loop() {
-    int force = analogRead(FSR_PIN);
-    if (force > 1000) {  // Force threshold
-        uint8_t message = 1; // Signal to buzz
-        esp_now_send(receiverAddress, &message, sizeof(message));
-        delay(100); // Prevent spamming
+  // Read the analog value from the force sensor
+  int sensorValue = analogRead(FORCE_SENSOR_PIN);
+
+  // Check if the sensor value exceeds the threshold
+  if (sensorValue > threshold) {
+    const char* message = "ON";
+    esp_err_t result = esp_now_send(peerMAC, (uint8_t*)message, strlen(message));
+
+    if (result == ESP_OK) {
+      Serial.println("Message sent successfully");
+    } else {
+      Serial.println("Error sending message");
     }
-}
+  } else {
+    const char* message = "OFF";
+    esp_err_t result = esp_now_send(peerMAC, (uint8_t*)message, strlen(message));
 
-ESP32 Receiver Code (Bracelet 2):
-            
-#include <esp_now.h>
-#include <WiFi.h>
-#define BUZZER_PIN 27
-
-void onReceive(const uint8_t *macAddr, const uint8_t *data, int dataLen) {
-    if (data[0] == 1) { // Check for buzz signal
-        digitalWrite(BUZZER_PIN, HIGH);
-        delay(500);
-        digitalWrite(BUZZER_PIN, LOW);
+    if (result == ESP_OK) {
+      Serial.println("Message sent successfully");
+    } else {
+      Serial.println("Error sending message");
     }
-}
+  }
 
-void setup() {
-    Serial.begin(115200);
-    WiFi.mode(WIFI_STA);
-    pinMode(BUZZER_PIN, OUTPUT);
-    esp_now_init();
-    esp_now_register_recv_cb(onReceive);
-}
-
-void loop() {
-    // Nothing to do here; waits for signal
-}
-        </code></pre>
+  delay(250);  // Short delay to avoid flooding the serial monitor
+}</code></pre>
     </section>
 
     <section>
