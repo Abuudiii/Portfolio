@@ -35,6 +35,7 @@
             max-width: 800px;
             margin-left: auto;
             margin-right: auto;
+            text-align: left; /* Left-align text inside sections */
         }
         h1, h2 {
             color: #ffffff;
@@ -43,7 +44,7 @@
         }
         p {
             color: #d0d0d0;
-            text-align: center;
+            text-align: left; /* Ensure paragraph text is left-aligned */
         }
         pre {
             color: #d0d0d0;
@@ -100,7 +101,7 @@
     </section>
 
     <section>
-    <h2>Concept</h2>
+        <h2>Concept</h2>
         <div class="center-content">
             <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; max-width: 90%; margin: 0 auto;">
                 <img src="plink1.jpg" alt="PulseLink Concept 1" style="width: 45%; max-width: 300px; min-width: 200px; height: auto;">
@@ -111,15 +112,12 @@
         </div>
         <p>The concept behind PulseLink Bracelets focuses on enhancing emotional connection through tactile interaction. By using a simple press of the sensor on one bracelet, a signal is transmitted to the paired bracelet, creating a gentle buzz. This minimalist design fosters an intuitive and immediate response, making it a creative tool for staying in touch. The use of ESP-NOW ensures a low-latency connection, reinforcing the real-time experience of the interaction.</p>
         <p>The bracelets are housed in custom-designed, 3D-printed casings made of lightweight and durable material. The ergonomic design ensures that the bracelets are comfortable to wear for extended periods while securely housing the electronics. The curved design of the casing follows the natural shape of the wrist, while strategically placed openings allow for easy access to the force sensor and buzzer components.</p>
-        <p>(ps. literal blood and sweat was spilled for this project as you can see)</p>
     </section>
-
-
 
     <section>
         <h2>Interaction Details</h2>
-        <p>The concept behind PulseLink Bracelets focuses on enhancing emotional connection through tactile interaction. By using a simple press of the sensor on one bracelet, a signal is transmitted to the paired bracelet, creating a gentle buzz. This minimalist design fosters an intuitive and immediate response, making it a creative tool for staying in touch. The use of ESP-NOW ensures a low-latency connection, reinforcing the real-time experience of the interaction.</p>
-        <p>The bracelets are housed in custom-designed, 3D-printed casings made of lightweight and durable material. The ergonomic design ensures that the bracelets are comfortable to wear for extended periods while securely housing the electronics. The curved design of the casing follows the natural shape of the wrist, while strategically placed openings allow for easy access to the force sensor and buzzer components.</p>    </section>
+        <p>Each bracelet is equipped with an ESP32 microcontroller, a force-sensitive resistor (FSR), and a buzzer. When the FSR detects pressure, the ESP32 sends a signal via ESP-NOW to the other ESP32. Upon receiving the signal, the second bracelet's ESP32 activates its buzzer. This design provides seamless two-way communication, with minimal power consumption and high reliability. The bracelets are lightweight and designed for all-day wear.</p>
+    </section>
 
     <section>
         <h2>Project Code</h2>
@@ -127,117 +125,46 @@
 #include <WiFi.h>
 #include <esp_now.h>
 
-
 // Define pins
 #define MOTOR_PIN 18          // GPIO pin connected to the transistor base
 #define FORCE_SENSOR_PIN 34  // Analog pin connected to the force sensor
 const int threshold = 50;  // Adjust based on your sensor readings
 
-
-// Peer MAC address (replace with the other device's MAC address) cc:db:a7:32:1c:bc
-uint8_t peerMAC[] = {0xfc, 0xf5, 0xc4, 0x03, 0xbe, 0xe0}; // Example MAC
-char message[250];
-
-
+// Peer MAC address (replace with the other device's MAC address)
+uint8_t peerMAC[] = {0xfc, 0xf5, 0xc4, 0x03, 0xbe, 0xe0};
 
 // Callback function to handle received messages
 void onDataReceived(const esp_now_recv_info_t* recvInfo, const uint8_t* data, int dataLen) {
-  Serial.print("Message received from: ");
-  for (int i = 0; i < 6; i++) {
-    Serial.printf("%02X", recvInfo->src_addr[i]);
-    if (i < 5) Serial.print(":");
-  }
-  Serial.println();
-
-  // Process the received data
-  char message[dataLen + 1];
-  memcpy(message, data, dataLen);
-  message[dataLen] = '\0';  // Null-terminate the message
-
-  Serial.printf("Message: %s\n", message);
-  if (strcmp(message, "ON") == 0) {
-    digitalWrite(MOTOR_PIN, HIGH);
-  }
-  else if (strcmp(message, "OFF") == 0) {
-    digitalWrite(MOTOR_PIN, LOW);
-  }
+    Serial.println("Message received");
+    if (data[0] == 1) {
+        digitalWrite(MOTOR_PIN, HIGH);
+        delay(1000);
+        digitalWrite(MOTOR_PIN, LOW);
+    }
 }
-
-// Callback function to handle message sending status
-void onDataSent(const uint8_t* macAddr, esp_now_send_status_t status) {
-  Serial.print("Last message sent to: ");
-  for (int i = 0; i < 6; i++) {
-    Serial.printf("%02X", macAddr[i]);
-    if (i < 5) Serial.print(":");
-  }
-  Serial.print(" Status: ");
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Success" : "Fail");
-}
-
-
-
 
 void setup() {
-  Serial.begin(9600);
-  // Set up the motor control pin
-  pinMode(MOTOR_PIN, OUTPUT);
-  digitalWrite(MOTOR_PIN, LOW);  // Ensure motor is off at startup
-
-  // Initialize Wi-Fi in station mode
-  WiFi.mode(WIFI_STA);
-  Serial.println("Wi-Fi initialized in STA mode");
-
-   // Initialize ESP-NOW
-  if (esp_now_init() != ESP_OK) {
-    Serial.println("ESP-NOW initialization failed!");
-    return;
-  }
-  Serial.println("ESP-NOW initialized");
-
-  // Register callback functions
-  esp_now_register_recv_cb(onDataReceived);
-  esp_now_register_send_cb(onDataSent);
-
-  // Register the peer
-  esp_now_peer_info_t peerInfo;
-  memcpy(peerInfo.peer_addr, peerMAC, 6);
-  peerInfo.channel = WiFi.channel();  // Use default Wi-Fi channel
-  peerInfo.encrypt = false;
-    if (esp_now_add_peer(&peerInfo) != ESP_OK) {
-    Serial.println("Failed to add peer");
-    return;
-  }
-  Serial.println("Peer added");
-
+    Serial.begin(9600);
+    WiFi.mode(WIFI_STA);
+    pinMode(MOTOR_PIN, OUTPUT);
+    esp_now_init();
+    esp_now_register_recv_cb(onDataReceived);
+    esp_now_peer_info_t peerInfo;
+    memcpy(peerInfo.peer_addr, peerMAC, 6);
+    peerInfo.channel = 0;
+    peerInfo.encrypt = false;
+    esp_now_add_peer(&peerInfo);
 }
 
 void loop() {
-  // Read the analog value from the force sensor
-  int sensorValue = analogRead(FORCE_SENSOR_PIN);
-
-  // Check if the sensor value exceeds the threshold
-  if (sensorValue > threshold) {
-    const char* message = "ON";
-    esp_err_t result = esp_now_send(peerMAC, (uint8_t*)message, strlen(message));
-
-    if (result == ESP_OK) {
-      Serial.println("Message sent successfully");
-    } else {
-      Serial.println("Error sending message");
+    int sensorValue = analogRead(FORCE_SENSOR_PIN);
+    if (sensorValue > threshold) {
+        uint8_t message = 1;
+        esp_now_send(peerMAC, &message, sizeof(message));
+        delay(100);
     }
-  } else {
-    const char* message = "OFF";
-    esp_err_t result = esp_now_send(peerMAC, (uint8_t*)message, strlen(message));
-
-    if (result == ESP_OK) {
-      Serial.println("Message sent successfully");
-    } else {
-      Serial.println("Error sending message");
-    }
-  }
-
-  delay(250);  // Short delay to avoid flooding the serial monitor
-}</code></pre>
+}
+        </code></pre>
     </section>
 
     <section>
@@ -253,7 +180,7 @@ void loop() {
         <div class="center-content">
             <p>Watch the PulseLink Bracelets in action:</p>
             <video controls>
-                <source src="copy_E666DC97-90B6-48E0-9086-C809EBF48924 2.mov" type="video/mp4">
+                <source src="PulseLinkDemo.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
         </div>
@@ -262,7 +189,7 @@ void loop() {
     <section>
         <h2>Reference Materials</h2>
         <ul>
-            <li><a href="https://www.arduino.cc/en/Reference/FSR" target="_blank">Force-Sensitive Resistor Documentation</a></li>
+            <li><a href="https://www.youtube.com/@ProductDesignOnline" target="_blank">AutoDesk Fusion 360 Tutorial Resource</a></li>
             <li><a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/network/esp_now.html" target="_blank">ESP-NOW Documentation</a></li>
         </ul>
     </section>
