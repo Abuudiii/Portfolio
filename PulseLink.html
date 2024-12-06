@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulseLink Bracelets</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #1c1c1c;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        header, footer {
+            text-align: center;
+            padding: 20px;
+        }
+        header {
+            border-bottom: 1px solid #555;
+        }
+        footer {
+            border-top: 1px solid #555;
+            font-size: 0.8em;
+            color: #777;
+        }
+        section {
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        h1, h2 {
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        p {
+            color: #d0d0d0;
+            text-align: center;
+        }
+        pre {
+            color: #d0d0d0;
+            text-align: left;
+            overflow-x: auto;
+            background-color: #333;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #ffffff;
+        }
+        img {
+            max-width: 100%;
+            width: 90%;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px auto;
+            display: block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        video {
+            max-width: 100%;
+            width: 90%;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px auto;
+            display: block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        iframe {
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            max-width: 100%;
+        }
+        .center-content {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>PulseLink Bracelets</h1>
+        <a href="index.html">Back to Portfolio</a>
+    </header>
+
+    <section>
+        <h2>Project Overview</h2>
+        <p>PulseLink Bracelets are a pair of wireless, interactive bracelets designed to connect two individuals over distance. Using force sensors and ESP-NOW communication with ESP32 microcontrollers, each bracelet allows users to send a tactile signal by pressing a button. The signal activates a buzzer on the other bracelet, enabling a unique form of nonverbal communication. PulseLink Bracelets are perfect for partners, friends, or family members who want to feel connected despite being apart.</p>
+    </section>
+
+    <section>
+        <h2>Concept</h2>
+        <div class="center-content" style="display: flex; justify-content: center; gap: 20px;">
+            <img src="PulseLinkConcept1.jpg" alt="PulseLink Concept 1" style="width: 45%; height: auto;">
+            <img src="PulseLinkConcept2.jpg" alt="PulseLink Concept 2" style="width: 45%; height: auto;">
+        </div>
+        <p>The concept behind PulseLink Bracelets focuses on enhancing emotional connection through tactile interaction. By using a simple press of the sensor on one bracelet, a signal is transmitted to the paired bracelet, creating a gentle buzz. This minimalist design fosters an intuitive and immediate response, making it a creative tool for staying in touch. The use of ESP-NOW ensures a low-latency connection, reinforcing the real-time experience of the interaction.</p>
+    </section>
+
+    <section>
+        <h2>Interaction Details</h2>
+        <p>Each bracelet is equipped with an ESP32 microcontroller, a force-sensitive resistor (FSR), and a buzzer. When the FSR detects pressure, the ESP32 sends a signal via ESP-NOW to the other ESP32. Upon receiving the signal, the second bracelet's ESP32 activates its buzzer. This design provides seamless two-way communication, with minimal power consumption and high reliability. The bracelets are lightweight and designed for all-day wear.</p>
+    </section>
+
+    <section>
+        <h2>Project Code</h2>
+        <pre><code>
+ESP32 Sender Code (Bracelet 1):
+            
+#include <esp_now.h>
+#include <WiFi.h>
+
+uint8_t receiverAddress[] = {0x24, 0x6F, 0x28, 0xD1, 0xD5, 0x38}; // Replace with Bracelet 2 MAC
+#define FSR_PIN 34
+
+void setup() {
+    Serial.begin(115200);
+    WiFi.mode(WIFI_STA);
+    esp_now_init();
+    esp_now_peer_info_t peerInfo;
+    memcpy(peerInfo.peer_addr, receiverAddress, 6);
+    peerInfo.channel = 0;
+    peerInfo.encrypt = false;
+    esp_now_add_peer(&peerInfo);
+}
+
+void loop() {
+    int force = analogRead(FSR_PIN);
+    if (force > 1000) {  // Force threshold
+        uint8_t message = 1; // Signal to buzz
+        esp_now_send(receiverAddress, &message, sizeof(message));
+        delay(100); // Prevent spamming
+    }
+}
+
+ESP32 Receiver Code (Bracelet 2):
+            
+#include <esp_now.h>
+#include <WiFi.h>
+#define BUZZER_PIN 27
+
+void onReceive(const uint8_t *macAddr, const uint8_t *data, int dataLen) {
+    if (data[0] == 1) { // Check for buzz signal
+        digitalWrite(BUZZER_PIN, HIGH);
+        delay(500);
+        digitalWrite(BUZZER_PIN, LOW);
+    }
+}
+
+void setup() {
+    Serial.begin(115200);
+    WiFi.mode(WIFI_STA);
+    pinMode(BUZZER_PIN, OUTPUT);
+    esp_now_init();
+    esp_now_register_recv_cb(onReceive);
+}
+
+void loop() {
+    // Nothing to do here; waits for signal
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>Circuit Schematic</h2>
+        <div class="center-content">
+            <p>The schematic demonstrates how the ESP32 connects to the force-sensitive resistor and buzzer for seamless two-way communication between the bracelets. This minimalistic design ensures low power usage and high reliability.</p>
+            <img src="PulseLinkSchematic.png" alt="PulseLink Circuit Schematic">
+        </div>
+    </section>
+
+    <section>
+        <h2>Interaction Video</h2>
+        <div class="center-content">
+            <p>Watch the PulseLink Bracelets in action:</p>
+            <video controls>
+                <source src="PulseLinkVideo.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </section>
+
+    <section>
+        <h2>Reference Materials</h2>
+        <ul>
+            <li><a href="https://www.arduino.cc/en/Reference/FSR" target="_blank">Force-Sensitive Resistor Documentation</a></li>
+            <li><a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/network/esp_now.html" target="_blank">ESP-NOW Documentation</a></li>
+        </ul>
+    </section>
+</body>
+</html>
